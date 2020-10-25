@@ -183,6 +183,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 //DPTemp & DPHours - float |  MQTT-Topic bsp: VITOWIFI/gettempa 
 void tempCallbackHandler(const IDatapoint& dp, DPValue value) {
   //Umwandeln, und zum schluss per mqtt publish an mqtt-broker senden
+  Serial.println("tempCallbackHandler()");
   char outVal[9];
   dtostrf(value.getFloat(), 6, 2, outVal);
   char outName[30] = "VITOWIFI/";
@@ -241,9 +242,13 @@ void setup() {
   getBetriebPartyM2.setCallback(statCallbackHandler);
   
   //Wichtig, da sonst ueber die Serielle-Konsole (Optolink) Text geschrieben wird
-  VitoWiFi.disableLogger();
+  //VitoWiFi.disableLogger();
+
+  VitoWiFi.setLogger(&Serial);
+  VitoWiFi.enableLogger();
   //Setze Serielle PINS an VitoWifi
-  VitoWiFi.setup(&Serial, 3, 1);
+  //VitoWiFi.setup(&Serial, 3, 1);
+  VitoWiFi.setup(&Serial2, 16, 17); 
 
   //Verbindungsaufbau und setzen der Optionen
   WiFi.onEvent(onWifiConnect, WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
